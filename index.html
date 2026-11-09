@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Daily Life Assistant</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-icon">✦</span><div><strong>DailyMate</strong><small>Smart Life Assistant</small></div></div>
+      <nav aria-label="Main navigation">
+        <a class="nav-link active" href="#overview">▦ <span>Overview</span></a>
+        <a class="nav-link" href="#tasks">✓ <span>My Tasks</span></a>
+        <a class="nav-link" href="#reminders">◷ <span>Reminders</span></a>
+        <a class="nav-link" href="#expenses">₹ <span>Expenses</span></a>
+        <a class="nav-link" href="#notes">▤ <span>Quick Notes</span></a>
+        <a class="nav-link" href="#study">▣ <span>Study Planner</span></a>
+      </nav>
+      <div class="sidebar-tip"><span>💡</span><strong>Small steps matter</strong><p>Plan your day, focus on one task at a time, and celebrate your progress.</p></div>
+      <p class="sidebar-footer">Your day, a little more organised.</p>
+    </aside>
+
+    <main class="main-content" id="overview">
+      <header class="topbar">
+        <div><p class="eyebrow">YOUR PERSONAL SPACE</p><h1>Good day! <span>☀️</span></h1><p class="muted">Let's make today simple and productive.</p></div>
+        <div class="date-chip" id="todayDate">Today</div>
+      </header>
+
+      <section class="stats-grid" aria-label="Daily summary">
+        <article class="stat-card"><div class="stat-icon lavender">✓</div><div><p>Tasks completed</p><strong id="completedCount">0</strong><small>Keep going!</small></div></article>
+        <article class="stat-card"><div class="stat-icon mint">◷</div><div><p>Pending tasks</p><strong id="pendingCount">0</strong><small>One at a time</small></div></article>
+        <article class="stat-card"><div class="stat-icon peach">₹</div><div><p>Today's expenses</p><strong id="todayExpense">₹0</strong><small>Track your spending</small></div></article>
+        <article class="stat-card"><div class="stat-icon sky">▤</div><div><p>Quick notes</p><strong id="noteCount">0</strong><small>Ideas saved</small></div></article>
+      </section>
+
+      <div class="content-grid">
+        <section class="panel tasks-panel" id="tasks">
+          <div class="section-heading"><div><p class="eyebrow">STAY ON TRACK</p><h2>My Tasks</h2></div><span class="section-symbol">✓</span></div>
+          <form id="taskForm" class="inline-form">
+            <input id="taskInput" type="text" placeholder="What do you need to do?" maxlength="100" required>
+            <button type="submit">+ Add task</button>
+          </form>
+          <ul id="taskList" class="item-list"><li class="empty-state">No tasks yet. Add your first task above.</li></ul>
+        </section>
+
+        <section class="panel reminders-panel" id="reminders">
+          <div class="section-heading"><div><p class="eyebrow">DON'T FORGET</p><h2>Reminders</h2></div><span class="section-symbol">◷</span></div>
+          <form id="reminderForm" class="stack-form">
+            <input id="reminderInput" type="text" placeholder="Reminder title" maxlength="80" required>
+            <div class="form-row"><input id="reminderTime" type="time" required><button type="submit">Set reminder</button></div>
+          </form>
+          <ul id="reminderList" class="item-list compact-list"><li class="empty-state">No reminders added.</li></ul>
+          <p class="helper-text">Reminders are saved in this browser. Keep this page open to receive an on-screen alert at the set time.</p>
+        </section>
+
+        <section class="panel expenses-panel" id="expenses">
+          <div class="section-heading"><div><p class="eyebrow">MIND YOUR MONEY</p><h2>Expense Tracker</h2></div><span class="section-symbol">₹</span></div>
+          <form id="expenseForm" class="inline-form">
+            <input id="expenseName" type="text" placeholder="Expense name" maxlength="60" required>
+            <input id="expenseAmount" type="number" placeholder="Amount (₹)" min="1" step="0.01" required>
+            <button type="submit">Add</button>
+          </form>
+          <div class="expense-total"><span>Total recorded</span><strong id="expenseTotal">₹0.00</strong></div>
+          <ul id="expenseList" class="item-list compact-list"><li class="empty-state">No expenses recorded.</li></ul>
+        </section>
+
+        <section class="panel notes-panel" id="notes">
+          <div class="section-heading"><div><p class="eyebrow">SAVE YOUR IDEAS</p><h2>Quick Notes</h2></div><span class="section-symbol">▤</span></div>
+          <form id="noteForm" class="stack-form">
+            <input id="noteTitle" type="text" placeholder="Note title" maxlength="60" required>
+            <textarea id="noteText" rows="3" placeholder="Write something important..." maxlength="500" required></textarea>
+            <button type="submit">Save note</button>
+          </form>
+          <div id="noteList" class="notes-list"><p class="empty-state">Your saved notes will appear here.</p></div>
+        </section>
+
+        <section class="panel study-panel" id="study">
+          <div class="section-heading"><div><p class="eyebrow">LEARN A LITTLE DAILY</p><h2>Study Planner</h2></div><span class="section-symbol">▣</span></div>
+          <form id="studyForm" class="inline-form">
+            <input id="studySubject" type="text" placeholder="Subject or topic" maxlength="80" required>
+            <input id="studyDuration" type="number" placeholder="Minutes" min="1" max="600" required>
+            <button type="submit">Add</button>
+          </form>
+          <ul id="studyList" class="item-list"><li class="empty-state">Add a topic to plan your study time.</li></ul>
+        </section>
+      </div>
+      <footer class="page-footer">Made to make everyday planning easier <span>✦</span></footer>
+    </main>
+  </div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const read = (key) => { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } };
+  const save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+  let tasks = read('dm_tasks'), reminders = read('dm_reminders'), expenses = read('dm_expenses'), notes = read('dm_notes'), study = read('dm_study');
+  const money = n => '₹' + Number(n).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  const safe = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const today = new Date().toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  $('todayDate').textContent = today;
+  const empty = text => `<li class="empty-state">${text}</li>`;
+
+  function renderTasks() {
+    $('taskList').innerHTML = tasks.length ? tasks.map(t => `<li class="task-item ${t.done?'done':''}"><label><input type="checkbox" data-task="${t.id}" ${t.done?'checked':''}><span>${safe(t.text)}</span></label><button class="delete-btn" data-delete-task="${t.id}" aria-label="Delete task">×</button></li>`).join('') : empty('No tasks yet. Add your first task above.');
+    $('completedCount').textContent = tasks.filter(t=>t.done).length;
+    $('pendingCount').textContent = tasks.filter(t=>!t.done).length;
+  }
+  $('taskForm').addEventListener('submit', e => { e.preventDefault(); tasks.unshift({id:Date.now(),text:$('taskInput').value.trim(),done:false}); save('dm_tasks',tasks); $('taskInput').value=''; renderTasks(); });
+  $('taskList').addEventListener('change', e => { if(e.target.dataset.task){ const t=tasks.find(x=>x.id==e.target.dataset.task); if(t)t.done=e.target.checked; save('dm_tasks',tasks); renderTasks(); } });
+  $('taskList').addEventListener('click', e => { const id=e.target.dataset.deleteTask; if(id){tasks=tasks.filter(t=>t.id!=id);save('dm_tasks',tasks);renderTasks();} });
+
+  function renderReminders() {
+    $('reminderList').innerHTML = reminders.length ? reminders.map(r=>`<li class="simple-item"><div><strong>${safe(r.text)}</strong><small>${safe(r.time)}</small></div><button class="delete-btn" data-delete-reminder="${r.id}" aria-label="Delete reminder">×</button></li>`).join('') : empty('No reminders added.');
+  }
+  $('reminderForm').addEventListener('submit', e => { e.preventDefault(); reminders.push({id:Date.now(),text:$('reminderInput').value.trim(),time:$('reminderTime').value,alerted:false}); save('dm_reminders',reminders); $('reminderInput').value=''; $('reminderTime').value=''; renderReminders(); });
+  $('reminderList').addEventListener('click', e => {const id=e.target.dataset.deleteReminder;if(id){reminders=reminders.filter(r=>r.id!=id);save('dm_reminders',reminders);renderReminders();}});
+  function checkReminders(){
+    const now=new Date(), time=now.toTimeString().slice(0,5), dateKey=now.toDateString();
+    reminders.forEach(r=>{const key='dm_alert_'+dateKey+'_'+r.id;if(r.time===time&&!localStorage.getItem(key)){alert('Reminder: '+r.text);localStorage.setItem(key,'1');}});
+  }
+  setInterval(checkReminders, 15000);
+
+  function renderExpenses(){
+    $('expenseList').innerHTML=expenses.length?expenses.slice().reverse().map(x=>`<li class="simple-item"><div><strong>${safe(x.name)}</strong><small>${safe(x.date)}</small></div><span class="amount">${money(x.amount)}</span><button class="delete-btn" data-delete-expense="${x.id}" aria-label="Delete expense">×</button></li>`).join(''):empty('No expenses recorded.');
+    const total=expenses.reduce((s,x)=>s+Number(x.amount),0); $('expenseTotal').textContent=money(total);
+    const key=new Date().toDateString(); $('todayExpense').textContent=money(expenses.filter(x=>x.date===key).reduce((s,x)=>s+Number(x.amount),0)).replace('.00','');
+  }
+  $('expenseForm').addEventListener('submit',e=>{e.preventDefault();const amount=Number($('expenseAmount').value);if(amount<=0)return;expenses.push({id:Date.now(),name:$('expenseName').value.trim(),amount,date:new Date().toDateString()});save('dm_expenses',expenses);$('expenseName').value='';$('expenseAmount').value='';renderExpenses();});
+  $('expenseList').addEventListener('click',e=>{const id=e.target.dataset.deleteExpense;if(id){expenses=expenses.filter(x=>x.id!=id);save('dm_expenses',expenses);renderExpenses();}});
+
+  function renderNotes(){
+    $('noteList').innerHTML=notes.length?notes.slice().reverse().map(n=>`<article class="note-card"><div><strong>${safe(n.title)}</strong><button class="delete-btn" data-delete-note="${n.id}" aria-label="Delete note">×</button></div><p>${safe(n.text)}</p></article>`).join(''):'<p class="empty-state">Your saved notes will appear here.</p>';
+    $('noteCount').textContent=notes.length;
+  }
+  $('noteForm').addEventListener('submit',e=>{e.preventDefault();notes.push({id:Date.now(),title:$('noteTitle').value.trim(),text:$('noteText').value.trim()});save('dm_notes',notes);$('noteTitle').value='';$('noteText').value='';renderNotes();});
+  $('noteList').addEventListener('click',e=>{const id=e.target.dataset.deleteNote;if(id){notes=notes.filter(n=>n.id!=id);save('dm_notes',notes);renderNotes();}});
+
+  function renderStudy(){ $('studyList').innerHTML=study.length?study.map(s=>`<li class="simple-item"><div><strong>${safe(s.subject)}</strong><small>${s.minutes} minutes</small></div><button class="delete-btn" data-delete-study="${s.id}" aria-label="Delete study topic">×</button></li>`).join(''):empty('Add a topic to plan your study time.'); }
+  $('studyForm').addEventListener('submit',e=>{e.preventDefault();study.push({id:Date.now(),subject:$('studySubject').value.trim(),minutes:Number($('studyDuration').value)});save('dm_study',study);$('studySubject').value='';$('studyDuration').value='';renderStudy();});
+  $('studyList').addEventListener('click',e=>{const id=e.target.dataset.deleteStudy;if(id){study=study.filter(s=>s.id!=id);save('dm_study',study);renderStudy();}});
+
+  renderTasks();renderReminders();renderExpenses();renderNotes();renderStudy();
+</script>
+</body>
+</html>
